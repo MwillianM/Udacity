@@ -5,7 +5,9 @@
 > **Author :** Matheus Willian Machado  
 > **Date :** February 16, 2018
 
-## Intro
+## Introduction
+
+[![Federal District, Brazil](./area.png)](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784)
 
 **Area:** [Federal District, Brazil](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784 "OpenStreetMap")  
 **URL:** <https://overpass-api.de/api/map?bbox=-48.1479,-15.9003,-47.6089,-15.5996>  
@@ -305,7 +307,7 @@ Finally, address information were shaped into a python dictionary, for a better 
 <tag k="addr:suburb" v="Águas Claras"/>
 ```
 
-TO
+To
 
 ```json
 {"address": {"city": "Brasília",
@@ -371,8 +373,6 @@ Output:
 
 ## Conclusion
 
-
-
 ### Problems found on map
 
 - Special chars and bad keys in tag elements.
@@ -392,7 +392,6 @@ Output:
 |audit.py | 2,33 KB |
 |clean.py | 1,39 KB |
 |xml2json.py | 3,33 KB |
-
 
 ### Additional Ideas
 
@@ -466,3 +465,14 @@ Output:
 { "_id" : "BladeTC", "contributions" : 10060 }
 { "_id" : "wesleygmartins", "contributions" : 9313 }
 ```
+
+### Sugestions
+
+Analyzing the dataset it was possible to perceive some problems, such as:  
+presence of special characters in keys values and words in the native language of the area (Portuguese), avoiding the standard of writing in English;  
+a small amount of postal code data, which would be very useful, valid and cross-referenced information with other reliable and external databases, this data could greatly aid in acquiring more information to complement the map; and  
+a single user leads too far ahead in the number of contributions, which shows an unbalanced contribution in the area.  
+After listing the problems encountered, some options are suggested:  
+audit and clean the data from time to time;  
+suggest the insertion of postal code tag at the time of data registration;  
+encourage greater user collaboration;  

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 '''
-  For the data:
-  - [x] Fix multi-tags to just one tag with all values (sfields).
-  - [x] Shape address information into a subfield.
-  - [x] Clean tags according to clean.py.
-  - [x] Drop all "other keys" remaining.
-  - [x] Convert xml data to json.
+  This module includes functions to:
+    Open a xml file,
+    Convert element values,
+    Clean and shape tag element values,
+    Drop unused tags, and
+    Convert the file to json format.    
 '''
 
 import xml.etree.ElementTree as ET
@@ -13,16 +13,26 @@ import re, json
 import sample, clean
 from datetime import datetime
 
-FILE = "area.osm"
-lower = re.compile(r'^([a-z]|-|_)*$')
-lower_colon = re.compile(r'^([a-z]|-|_)*:([a-z]|-|_)*$')
-
 def shape_tag(tag,json,sfields):
+  '''Shape elements tag values according to the example bellow.
+  
+  Examples:
+    Shape address information into:
+    {'address':{'street':value,'number':value,...,'city':value}}
+    
+    Concatenate multifields ('field'+'_'+'number') values with ';'
+    into one field ('field' = 'value_1;value_2;...;value_n').
+  
+  Args:
+    tag (xml.etree.ElementTree.Element): element with 'k' and 'v' attributes.
+    json (dict): output json.
+    sfields (list): multifields.
+  
+  Returns:
+    NoneType.
+  '''
+  
   if tag.attrib['k'].startswith('addr:'):
-    '''
-      Shape address information into:
-      {'address':{'street':value,'number':value,...,'city':value}}
-    '''
     if 'address' not in json:
       json['address'] = {tag.attrib['k'].replace('addr:',''):tag.attrib['v']}
     else:
@@ -30,10 +40,6 @@ def shape_tag(tag,json,sfields):
     
     return
   elif any(tag.attrib['k'].startswith(f+'_') for f in sfields):
-    '''
-      Concatenate multifields ('field'+'_'+'number') values with ';'
-      into one field ('field' = 'value_1;value_2;...;value_n')
-    '''
     for item in json:
       if item == tag.attrib['k'][:tag.attrib['k'].find('_')]:
         json[tag.attrib['k'][:tag.attrib['k'].find('_')]] += ';'+tag.attrib['v']
@@ -47,6 +53,17 @@ def shape_tag(tag,json,sfields):
   json[tag.attrib['k']]=tag.attrib['v']
 
 def insert_child(child,json,sfields):
+  '''Clean, shape and insert elements into json output.
+  
+  Args:
+    child (xml.etree.ElementTree.Element): xml sub-elements.
+    json (dict): output json.
+    sfields (list): multifields.
+  
+  Returns:
+    NoneType.
+  '''
+  
   if child.tag == 'member':
     json['member'] = {'type':child.attrib['type']
                       ,'ref':int(child.attrib['ref'])
@@ -64,6 +81,15 @@ def insert_child(child,json,sfields):
     print('Child unexpected!\nChild: ',child.tag)
 
 def xml2json(root):
+  ''' Convert xml file to json output.
+  
+  Args:
+    root (xml.etree.ElementTree.Element): xml root element.
+  
+  Returns:
+    dict: xml in json format.
+  '''
+  
   print('Transforming xml to json...')
   data=[]
   sfields = ['sport','building:levels','landuse','natural','leisure','surface','water']
@@ -89,12 +115,24 @@ def xml2json(root):
   return data
 
 def write_json(filename,data):
+  '''Write data in a json file.
+  
+  Args:
+    filename (str): output file name.
+    data (dict): data to be written.
+  
+  Returns:
+    NoneType.
+  '''
+  
   print('Writing json...')
   with open(filename, 'w',encoding='utf8') as f:
     for i in data:
       f.write(json.dumps(i, ensure_ascii=False)+'\n')
 
 if __name__ == '__main__':
+  FILE = "area.osm"
+  
   root = sample.open_xml(FILE)
   tags = sample.count_elements(root)
   root,_ = sample.rm_unused_elements(root,tags)

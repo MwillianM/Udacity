@@ -1,24 +1,37 @@
 # -*- coding: utf-8 -*-
 '''
-  For the OpenStreetMap file:
-  - [x] Open the chosen area file that you downloaded.
-  - [x] Count first level elements that are in the xml.
-  - [x] Find children and attributes for each tag and so on with children.
-  - [x] Remove elements that just appears once.
-  - [x] Create a sample file for each main element.
+  This module includes functions to:
+    Open an xml file,
+    Study its structure, and
+    Generate samples files.
 '''
 
 import xml.etree.ElementTree as ET
 from pprint import pprint
 
-FILE = "area.osm"
-K = 100 #1 of K sample proportion
-
 def open_xml(file):
+  '''Open a xml file and return the root element.
+  
+  Args:
+    file (str): xml file name.
+  
+  Returns:
+    xml.etree.ElementTree.Element: xml root element.
+  '''
+  
   print('Openning the file...')
-  return ET.parse(FILE).getroot()
+  return ET.parse(file).getroot()
 
 def count_elements(root):
+  '''Count the first level sub-elements tags from an element (root).
+  
+  Args:
+    root (xml.etree.ElementTree.Element): xml root element.
+  
+  Returns:
+    dict: first level sub-elements tags and their occurence.
+  '''
+  
   print('Counting first level tags...')
   tags = {}
   for elem in root:
@@ -30,6 +43,17 @@ def count_elements(root):
   return tags
 
 def rm_unused_elements(root,tags):
+  '''Remove tags that just appears once from a dictionary and an xml element.
+  
+  Args:
+    root (xml.etree.ElementTree.Element): xml root element.
+    tags (dict): xml tags and their occurence.
+  
+  Returns:
+    xml.etree.ElementTree.Element: xml root without elements that just appears once.
+    dict: dictionary without elements that just appears once.
+  '''
+  
   print('Removing unsed tags...')
   for tag in tags.copy():
     if tags[tag] == 1:
@@ -39,6 +63,16 @@ def rm_unused_elements(root,tags):
   return root, tags
 
 def genealogy(root,gen={}):
+  '''Get children and attributes from an xml element recursively.
+  
+  Args:
+    root (xml.etree.ElementTree.Element): xml root element.
+    gen (dict, optional): dictionary to add children of the root.
+  
+  Returns:
+    dict: all children and attributes from an xml element.
+  '''
+  
   for elem in root:
     if elem.tag not in gen:
       gen[elem.tag] = {'attributes': list(elem.attrib.keys())
@@ -50,6 +84,17 @@ def genealogy(root,gen={}):
   return gen
 
 def sample(root,tags,k):
+  '''Generate files with 1/k sample proportion for each tag (on tags) from an xml element (root).
+  
+  Args:
+    root (xml.etree.ElementTree.Element): xml root element.
+    tags (dict): xml tags for file generation.
+    k (int): one sample for each k elements.
+  
+  Returns:
+    NoneType.
+  '''
+  
   print('Creating samples...')
   for tag in tags:
     i = 0
@@ -67,6 +112,11 @@ def sample(root,tags,k):
       print("Created "+filename+" with "+str(i//k)+" samples.")
 
 if __name__ == "__main__":
+  # str: xml file name.
+  FILE = "area.osm"
+  # int: sample proportion seed.
+  K = 100
+  
   root = open_xml(FILE)
   tags = count_elements(root)
   print('First Level Elements:')

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 '''
-  For the attributes of the tag elements:
-  - [x] Change key 'endereço' to 'addr:street' and 'Futsal' to 'sport'.
-  - [x] Change multi_colon to colon keys.
-  - [x] Expand abbreviations on values.
-  - [x] Show all changed tags.
+  This module clean element tags.
+  
+  Data
+  
+    keys (dict): keys changes.
+    values (dict): values changes.
 '''
 
 keys = {'endereço':'addr:street','Futsal':'sport'}
@@ -25,6 +26,14 @@ values = {'Cond.':'Condomínio '
          }
 
 def fix_tag(attr):
+  ''' Fix element tags according to the keys and values dict.
+  
+  Args:
+    attr (dict): tag element attributes.
+  
+  Returns:
+    dict: tag element attributes fixed.
+  '''
   for k in keys:
     if k == attr['k']:
       attr['k'] = keys[k]
