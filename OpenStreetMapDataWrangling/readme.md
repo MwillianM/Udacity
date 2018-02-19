@@ -8,7 +8,6 @@
 ## Introduction
 
 [![Federal District, Brazil](./area.png)](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784)
-https://www.openstreetmap.org/#map=12/-15.7501/-47.8784
 
 **Area:** [Federal District, Brazil](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784 "OpenStreetMap")  
 **URL:** <https://overpass-api.de/api/map?bbox=-48.1479,-15.9003,-47.6089,-15.5996>  
