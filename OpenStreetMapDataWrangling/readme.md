@@ -7,7 +7,7 @@
 
 ## Introduction
 
-[![Federal District, Brazil](./area.png)]
+![Federal District, Brazil](./area.png)
 
 https://www.openstreetmap.org/#map=12/-15.7501/-47.8784
 
