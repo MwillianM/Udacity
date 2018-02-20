@@ -23,7 +23,7 @@
 **Area:** [Federal District, Brazil](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784 "OpenStreetMap")  
 **URL:** <https://overpass-api.de/api/map?bbox=-48.1479,-15.9003,-47.6089,-15.5996>  
 **Motivation :** Area around my hometown (Brasilia).  
-**File Name :** area.osm.  
+**File Name :** [area.osm](./area.osm).  
 **File Size :** 82,1 MB.  
 
 ---
@@ -96,9 +96,9 @@ And for a better looking at the data, a sample of each tag was created at the pr
 
 **Sample Files**
 
-- **node_sample.osm** with 3506 samples and 35,7 KB.
-- **way_sample.osm** with 748 samples and 276 KB.
-- **relation_sample.osm** with 8 samples and 71,4 KB.
+- [**node_sample.osm**](./node_sample.osm) with 3506 samples and 35,7 KB.
+- [**way_sample.osm**](./way_sample.osm) with 748 samples and 276 KB.
+- [**relation_sample.osm**](./relation_sample.osm) with 8 samples and 71,4 KB.
 
 ---
 
@@ -336,7 +336,7 @@ To
 
 After the entire cleaning process, the data was converted from xml to json and written into a file.
 
-**File Name :** area.json.  
+**File Name :** [area.json](./area.json).  
 **File Size :** 88,5 MB.  
 
 ---
@@ -504,6 +504,8 @@ wrong information can be purposely added or modified only to increase the user's
 ---
 
 ## References
+
+[references.txt](./references.txt)
 
 1. https://classroom.udacity.com/me
 1. https://docs.google.com/document/d/1F0Vs14oNEs2idFJR3C_OPxwS6L0HPliOii-QpbmrMo4/pub
