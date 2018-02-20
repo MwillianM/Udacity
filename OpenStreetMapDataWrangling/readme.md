@@ -2,14 +2,19 @@
 
 ## Python and MongoDB
 
-> **Author :** Matheus Willian Machado  
-> **Date :** February 20, 2018
+---
+
+**Author :** Matheus Willian Machado  
+**Date :** February 20, 2018
+
+---
 
 ## Project Overview
 
 > Choose any area of the world in https://www.openstreetmap.org and use data munging techniques, such as assessing the quality of the data for validity, accuracy, completeness, consistency and uniformity, to clean the OpenStreetMap data for a part of the world that you care about.  
 > Choose to learn SQL or MongoDB and apply your chosen schema to the project.  
-> Udacity
+
+---
 
 ## Introduction
 
@@ -27,7 +32,7 @@
 
 [sample.py](./sample.py)
 
-For the OpenStreetMap file:
+**For the OpenStreetMap file:**
 
 - [x] Open the chosen area file that you downloaded.
 - [x] Count first level elements that are in the xml.
@@ -101,7 +106,7 @@ And for a better looking at the data, a sample of each tag was created at the pr
 
 [audit.py](./audit.py)
 
-For the main elements:
+**For the main elements:**
 
 - [x] Test the types of attributes according to the data_types.
 - [x] Find special chars on string attributes.
@@ -190,11 +195,13 @@ And "other" were all the other keys that didn't match the above categories.
 }
 ```
 
+---
+
 ## Cleaning
 
 [clean.py](./clean.py)
 
-For the attributes of the tag elements:
+**For the attributes of the tag elements:**
 
 - [x] Change key 'endereço' to 'addr:street' and 'Futsal' to 'sport'.
 - [x] Change multi_colon to colon keys.
@@ -230,11 +237,13 @@ The values dictionary is a python dictionary that maps the abbreviation with its
 
 All changes were shown as output, this way it was possible to validate them.
 
+---
+
 ## XML to Json
 
 [xml2json.py](./xml2json.py)
 
-For the data:
+**For the data:**
 
 - [x] Clean tags according to clean.py.
 - [x] Fix multi-tags to just one tag with all values.
@@ -330,6 +339,8 @@ After the entire cleaning process, the data was converted from xml to json and w
 **File Name :** area.json.  
 **File Size :** 88,5 MB.  
 
+---
+
 ## MongoDB
 
 The data into json file was imported to MongoDB with `mongoimport` command.  
@@ -378,6 +389,8 @@ Output:
 Output:
 { "_id" : "amenity", "unique" : 78 }
 ```
+
+---
 
 ## Conclusion
 
@@ -487,3 +500,19 @@ encourage greater user collaboration.
 However, improve the data quality frequently can be a costly process and the insertion of wrong postal codes can mess up data in a cross validation.  
 Care must be taken on encouraging user collaboration, some solutions can be cheated like solutions based on points and prize, 
 wrong information can be purposely added or modified only to increase the user's score instead of collaborating with the map.
+
+---
+
+## References
+
+1. https://classroom.udacity.com/me
+1. https://docs.google.com/document/d/1F0Vs14oNEs2idFJR3C_OPxwS6L0HPliOii-QpbmrMo4/pub
+1. http://jbt.github.io/markdown-editor/
+1. https://www.tutorialspoint.com/mongodb/index.htm
+1. https://docs.mongodb.com/manual/
+1. https://stackoverflow.com/
+1. https://docs.python.org/3/
+1. https://help.github.com/articles/basic-writing-and-formatting-syntax/
+1. https://github.github.com/gfm/
+1. https://wiki.openstreetmap.org/wiki/Distrito_Federal,_Brazil
+1. https://wiki.openstreetmap.org/wiki/Category:Users_in_Distrito_Federal,_Brazil
