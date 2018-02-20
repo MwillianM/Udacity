@@ -7,7 +7,9 @@
 
 ## Introduction
 
-[![Federal District, Brazil](./area.png)](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784)
+[![Federal District, Brazil](./area.png)]
+
+https://www.openstreetmap.org/#map=12/-15.7501/-47.8784
 
 **Area:** [Federal District, Brazil](https://www.openstreetmap.org/#map=12/-15.7501/-47.8784 "OpenStreetMap")  
 **URL:** <https://overpass-api.de/api/map?bbox=-48.1479,-15.9003,-47.6089,-15.5996>  
@@ -25,7 +27,7 @@
 > - [x] Open the chosen area file that you downloaded.
 > - [x] Count first level elements that are in the xml.
 > - [x] Find children and attributes for each tag and so on with children.
-> - [x] Remove elements that just appears once.
+> - [x] Remove elements that appears just once.
 > - [x] Create a sample file for each main element.
 
 The first step was to download the XML file from the _URL_, referring to the _Area_.  
@@ -79,7 +81,7 @@ For each element, attributes and sub-elements (children) were studied.
 }
 ```
 
-It was decided to remove elements that just appears once, as they won't be part of the analysis.  
+It was decided to remove elements that appears just once, as they won't be part of the analysis.  
 And for a better looking at the data, a sample of each tag was created at the proportion of one per hundred records.  
 
 **Sample Files**
@@ -100,9 +102,9 @@ And for a better looking at the data, a sample of each tag was created at the pr
 > - [x] Count the type of key values from tag elements.
 > - [x] Show "other" key values (for the cleaning process).
 
-In the second step, all attributes were tested according to the "data_types".  
+On the second step, all attributes were tested according to the "data_types".  
 The data_types is a python dictionary that maps the attribute with its type.  
-To "int", "float" and "timestamp" fields were applied conversion commands.  
+To "int", "float" and "timestamp" fields conversion commands were applied.  
 For "string" fields, special characters were searched and shown.  
 "Unaudited" fields were skipped by the audit because they are free writing fields.  
 
@@ -119,7 +121,7 @@ For "string" fields, special characters were searched and shown.
 
 Special chars were found in "endereço" and "currency:R$".  
 For the first one was chosen to change it to "addr:street",
-for the other one was chosen to drop it.
+for the other one to drop it.
 
 > Special char ç found in :  endereço  
 > Special char $ found in :  currency:R$
@@ -136,7 +138,7 @@ They were classified and counted according to the following:
 
 Lower keys could only be formed with lowercase letters, "-" and "\_".  
 Lower\_colon keys were Lower keys with only one colon (":").  
-Lower\_colon keys were Lower keys with two or more colons.  
+Lower\_multi\_colon keys were Lower keys with two or more colons.  
 And "other" were all the other keys that didn't match the above categories.
 
 **Tag.k Auditing**
@@ -258,7 +260,7 @@ The group 1 was covered by the last section.
 - surface_1
 - water_1
 
-The group 2, which i called multi-tags because they were additional information to another tag with similar name, each of their values was concatenated to the main tag value and dropped before.  
+The group 2, which was called multi-tags because they were additional information to another tag with similar name, each of their values was concatenated to the main tag value and dropped before.  
 
 **Example**
 
@@ -297,7 +299,7 @@ To
 
 The group 3 was dropped.
 
-Finally, address information were shaped into a python dictionary, for a better visualization.
+Finally, address information was shaped into a python dictionary, for a better visualization.
 
 **Example**
 
@@ -468,7 +470,7 @@ Output:
 
 ### Sugestions
 
-Analyzing the dataset it was possible to perceive some problems, such as:  
+By analyzing the dataset it was possible to perceive some problems, such as:  
 presence of special characters in keys values and words in the native language of the area (Portuguese), avoiding the standard of writing in English;  
 a small amount of postal code data, which would be very useful, valid and cross-referenced information with other reliable and external databases, this data could greatly aid in acquiring more information to complement the map; and  
 a single user leads too far ahead in the number of contributions, which shows an unbalanced contribution in the area.  
