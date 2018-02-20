@@ -2,14 +2,19 @@
 
 ## Python and MongoDB
 
-> **Author :** Matheus Willian Machado  
-> **Date :** February 20, 2018
+---
+
+**Author :** Matheus Willian Machado  
+**Date :** February 20, 2018
+
+---
 
 ## Project Overview
 
 > Choose any area of the world in https://www.openstreetmap.org and use data munging techniques, such as assessing the quality of the data for validity, accuracy, completeness, consistency and uniformity, to clean the OpenStreetMap data for a part of the world that you care about.  
 > Choose to learn SQL or MongoDB and apply your chosen schema to the project.  
-> Udacity
+
+---
 
 ## Introduction
 
@@ -25,15 +30,15 @@
 
 ## Sampling
 
-[sample.py](./sample.py)
-
-For the OpenStreetMap file:
+**For the OpenStreetMap file:**
 
 - [x] Open the chosen area file that you downloaded.
 - [x] Count first level elements that are in the xml.
 - [x] Find children and attributes for each tag and so on with children.
 - [x] Remove elements that appears just once.
 - [x] Create a sample file for each main element.
+
+[sample.py](./sample.py)
 
 The first step was to download the XML file from the _URL_, referring to the _Area_.  
 After downloading the file, its structure was investigated.  
