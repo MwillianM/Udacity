@@ -30,6 +30,8 @@
 
 ## Sampling
 
+[sample.py](./sample.py)
+
 **For the OpenStreetMap file:**
 
 - [x] Open the chosen area file that you downloaded.
@@ -38,7 +40,6 @@
 - [x] Remove elements that appears just once.
 - [x] Create a sample file for each main element.
 
-[sample.py](./sample.py)
 
 The first step was to download the XML file from the _URL_, referring to the _Area_.  
 After downloading the file, its structure was investigated.  
@@ -195,6 +196,8 @@ And "other" were all the other keys that didn't match the above categories.
 }
 ```
 
+---
+
 ## Cleaning
 
 [clean.py](./clean.py)
@@ -335,6 +338,8 @@ After the entire cleaning process, the data was converted from xml to json and w
 **File Name :** area.json.  
 **File Size :** 88,5 MB.  
 
+---
+
 ## MongoDB
 
 The data into json file was imported to MongoDB with `mongoimport` command.  
@@ -383,6 +388,8 @@ Output:
 Output:
 { "_id" : "amenity", "unique" : 78 }
 ```
+
+---
 
 ## Conclusion
 
