@@ -489,16 +489,16 @@ Output:
 
 ### Sugestions
 
-Analyzing the dataset it was possible to perceive some problems, such as:  
-presence of special characters in keys values and words in the native language of the area (Portuguese), avoiding the standard of writing in English;  
-a small amount of postal code data, which would be very useful for validating and cross-checking information with other reliable and external databases, this data could greatly aid in acquiring more information to complement the map; and  
-a single user leads too far ahead in the number of contributions, which shows an unbalanced contribution in the area.  
+By analyzing the dataset it was possible to perceive some problems, such as:  
+presence of special characters in key values and words in the native language of the area (Portuguese), avoiding the standard of writing in English;  
+a small amount of postal code data, which would be very useful for validating and cross-checking information with other reliable and external databases, this data could greatly aid in acquiring more information to complete the map; and  
+a single user leads too far ahead in the number of contributions, which shows an unbalanced collaboration in the area.  
 After listing the problems encountered, some options are suggested:  
 audit and clean the data from time to time;  
 suggest the insertion of postal code tag at the time of data registration;  
-encourage greater user collaboration.  
-However, improve the data quality frequently can be a costly process and the insertion of wrong postal codes can mess up data in a cross validation.  
-Care must be taken on encouraging user collaboration, some solutions can be cheated like solutions based on points and prize, 
+encourage greater user cooperation.  
+However, improving the data quality frequently can be a costly process and the insertion of wrong postal codes can mess up the data in a cross validation.  
+Care must be taken on encouraging user collaboration, some solutions can be cheated like those based on points and prize, 
 wrong information can be purposely added or modified only to increase the user's score instead of collaborating with the map.
 
 ---
