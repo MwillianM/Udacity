@@ -1,7 +1,15 @@
-Flchain Exploration
+Flchain Exploratory Data Analysis
 ================
-Matheus Willian Machado
-May 6, 2018
+
+R
+-
+
+------------------------------------------------------------------------
+
+**Author :** Matheus Willian Machado
+**Date :** May 6, 2018
+
+------------------------------------------------------------------------
 
 Project Overview
 ----------------
@@ -47,10 +55,24 @@ Based on the above details, three points were selected for analysis:
 
 ------------------------------------------------------------------------
 
+``` r
+# Load libraries
+library(survival)
+library(ggplot2)
+library(GGally)
+library(dplyr)
+```
+
 ------------------------------------------------------------------------
 
 Dataset
 -------
+
+``` r
+# Load and show dataset
+data <- flchain
+head(data, 10)
+```
 
     ##    age sex sample.yr kappa lambda flc.grp creatinine mgus futime death
     ## 1   97   F      1997 5.700  4.860      10        1.7    0     85     1
@@ -75,6 +97,10 @@ Dataset
     ## 9  Respiratory
     ## 10 Circulatory
 
+``` r
+str(data)
+```
+
     ## 'data.frame':    7874 obs. of  11 variables:
     ##  $ age       : num  97 92 94 92 93 90 90 90 93 91 ...
     ##  $ sex       : Factor w/ 2 levels "F","M": 1 1 1 1 1 1 1 1 1 1 ...
@@ -87,6 +113,10 @@ Dataset
     ##  $ futime    : int  85 1281 69 115 1039 1355 2851 372 3309 1326 ...
     ##  $ death     : num  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ chapter   : Factor w/ 16 levels "Blood","Circulatory",..: 2 13 2 2 2 11 11 14 15 2 ...
+
+``` r
+summary(data)
+```
 
     ##       age         sex        sample.yr        kappa       
     ##  Min.   : 50.00   F:4350   Min.   :1995   Min.   : 0.010  
@@ -126,11 +156,31 @@ Lastly, summaries were given.
 Data Transformations
 --------------------
 
+``` r
+# Change bad names
+names(data)[c(3, 6)] <- c('sample.year', 'flc.group')
+```
+
 The variable names "sample.yr" and "flc.grp" have been adjusted to fit the Google's Style R Guide.
+
+``` r
+# Adjust abbreviated levels
+levels(data$sex) <- c('Female', 'Male')
+```
 
 For a better reading and legend display in the plots, sex factor levels were changed to "Female" and "Male", respectively.
 
+``` r
+# Cast to Factor
+data$flc.group <- as.factor(data$flc.group)
+```
+
 Since FLC groups values are just labels, its data type was modified to factor.
+
+``` r
+# Reduce many levels Factor
+sort(table(data$chapter))
+```
 
     ## 
     ##           Congenital                Blood                 Skin 
@@ -146,7 +196,17 @@ Since FLC groups values are just labels, its data type was modified to factor.
     ##          Circulatory 
     ##                  745
 
+``` r
+cat('5% of the non-NA values: ', sum(!is.na(data$chapter)) * 0.05)
+```
+
     ## 5% of the non-NA values:  108.45
+
+``` r
+chapter <- c('Circulatory', 'Neoplasms', 'Respiratory', 'Mental', 'Nervous')
+levels(data$chapter)[!levels(data$chapter) %in% chapter] <- 'Others'
+sort(table(data$chapter))
+```
 
     ## 
     ##     Nervous      Mental Respiratory      Others   Neoplasms Circulatory 
@@ -156,25 +216,72 @@ Chapter variable had sixteen levels initially.
 Note that most represents less than 5% of the non-NA values.
 So this less representative part was joined into a "Others" label.
 
+``` r
+# Convert boolean to Factor
+unique(data$mgus)
+```
+
     ## [1] 0 1
 
+``` r
+unique(data$death)
+```
+
     ## [1] 1 0
+
+``` r
+data$mgus <- factor(data$mgus,
+                    labels = c('non-mgus', 'mgus'))
+data$death <- factor(data$death,
+                     labels = c('alive', 'dead'))
+```
 
 Variables "mgus" and "death" were tested to confirm if they are boolean.
 As both had only two values, they were encoded as factors and labeled.
 
-    ## [1] TRUE
+``` r
+# Test and convert num to int
+all(data$age == round(data$age))
+```
 
     ## [1] TRUE
 
+``` r
+all(data$sample.year == round(data$sample.year))
+```
+
     ## [1] TRUE
+
+``` r
+all(data$futime == round(data$futime))
+```
+
+    ## [1] TRUE
+
+``` r
+data$age <- as.integer(data$age)
+data$sample.year <- as.integer(data$sample.year)
+data$futime <- as.integer(data$futime)
+```
 
 Columns "age", "sample.year" and "futime" was tested to confirm that all number are rounded.
 With true for all of them, this variables were casted to integer.
 
+``` r
+# Cut variables
+table(data$sample.year)
+```
+
     ## 
     ## 1995 1996 1997 1998 1999 2000 2001 2002 2003 
     ## 1275 3491 1381  687  350  245  175   48  222
+
+``` r
+data$recruits <- cut(data$sample.year,
+                     breaks = c(1994, 1997, 2000, 2003),
+                     labels = c('early', 'middle', 'late'))
+table(data$recruits)
+```
 
     ## 
     ##  early middle   late 
@@ -183,6 +290,13 @@ With true for all of them, this variables were casted to integer.
 "sample.year" has nine unique values.
 It was necessary to separate the recruits into three groups: early, middle and late.
 Thus, values were grouped every three years and stored in "recruits" variable.
+
+``` r
+# Create useful variables
+data <- transform(data,
+                  flc       = kappa + lambda,
+                  flc.ratio = kappa / lambda)
+```
 
 To calculate the FLC levels, it is necessary to add the two kappa and lambda portions.
 In addition, the Mayo Clinic has reported that the detection of monoclonal light chains depends on the ratio of free kappa and lambda (K/L) light chains.
@@ -193,43 +307,116 @@ More information about the [test](https://www.mayomedicallaboratories.com/test-c
 Univariate Plots
 ----------------
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_1-1.png)
+``` r
+# Age distribution
+ggplot(data, aes(age)) +
+  geom_histogram(binwidth = .5)
+```
+
+![](./images/age_distribution-1.png)
 
 As age is a integer variable.
 To see all frequencys, a small binwidth was chosen for the distribution.
 It shows one column to each age in the histogram.
 This distribution is concentrated around 50's and decreases over the years.
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_2-1.png)
+``` r
+# Samples obtained in each year
+ggplot(data, aes(sample.year)) +
+  geom_histogram(binwidth = 1)
+```
+
+![](./images/samples_year_distribution-1.png)
 
 Because of the narrower range compared to age, a higher binwidth was prefered to this.
 Most part is concentrate on the first three years.
 To analyse the density, the scale y was replaced as the x variable to "recruits".
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_3-1.png)
+``` r
+# Density of samples by epoch
+ggplot(data, aes(recruits, (..count.. / sum(..count..)))) +
+  geom_bar() +
+  ylab('Frequency') +
+  scale_y_continuous(breaks = seq(0, 1, .1))
+```
+
+![](./images/recruits_density-1.png)
 
 As expected, almost 80% of the sample was recruited within the first three years.
 In contrast, only about 5% in the last three years.
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_4-1.png)
+``` r
+# Frequency of kappa, lambda and creatinine sera
+ggplot(data) +
+  geom_freqpoly(aes(kappa,
+                    color = I('red')),
+                binwidth = .1) +
+  geom_freqpoly(aes(lambda,
+                    color = I('blue')),
+                binwidth = .1) +
+  geom_freqpoly(aes(creatinine,
+                    color = I('green')),
+                data     = subset(data, !is.na(creatinine)),
+                binwidth = .1) +
+  xlab('kappa, lambda and creatinine')
+```
+
+![](./images/sera_frequency-1.png)
 
 Serum variables were analyzed togheter.
 Red was used for kappa, blue for lambda and creatinine green.
 For a better understanding x-scale was transformed.
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_5-1.png)
+``` r
+# Frequency of kappa, lambda and creatinine sera (log)
+ggplot(data) +
+  geom_freqpoly(aes(log(kappa),
+                    color = I('red')),
+                binwidth = .1) +
+  geom_freqpoly(aes(log(lambda),
+                    color = I('blue')),
+                binwidth = .1) +
+  geom_freqpoly(aes(log(creatinine),
+                    color = I('green')),
+                data = subset(data,!is.na(creatinine)),
+                binwidth = .1) +
+  scale_x_continuous(breaks = seq(-4, 4, .5)) +
+  xlab('Log of kappa, lambda and creatinine')
+```
+
+![](./images/sera_log_frequency-1.png)
 
 Corroborating with the summaries, it's possible to see peaks near means.
 Most values are close, as shows the 1st and 3rd quartiles.
 Creatinine seems more concentrated and the others more diluted.
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_6-1.png)
+``` r
+# Frequency of FLC level and ratio (log)
+ggplot(data) +
+    geom_freqpoly(aes(log(flc),
+                      color = I('purple')),
+                  binwidth = .1) +
+    geom_freqpoly(aes(log(flc.ratio),
+                      color = I('orange')),
+                  binwidth = .1) +
+    scale_x_continuous(breaks = seq(-4, 4, .5)) +
+  xlab('Log of FLC level and ratio')
+```
+
+![](./images/flc_level_ratio_log_frequency-1.png)
 
 The level and ratio of Flc were analyzed together as well.
 Purple to level and orange to the other.
 As blue in the last plot was just before the red values, the orange peak before and near 0 (on log scale) and the purple one a bit ahead of 1 (on same scale) were expected.
 
-![](Flchain_Exploration_files/figure-markdown_github/Univariate_Plots_7-1.png)
+``` r
+# Distribution of flc.group
+ggplot(data) +
+  geom_bar(aes(flc.group)) +
+  scale_y_continuous(breaks = seq(0, 800, 50))
+```
+
+![](./images/flc_group_distribution-1.png)
 
 The last plot shows that the FLC groups have similar amounts.
 
@@ -283,6 +470,12 @@ Yes, the following variables were created to help achieve the objectives:
 Bivariate Plots
 ---------------
 
+``` r
+# Subseting data
+data = data[, c(1, 7, 13, 14, 6, 2, 8, 10, 12)]
+head(data)
+```
+
     ##   age creatinine    flc flc.ratio flc.group    sex     mgus death recruits
     ## 1  97        1.7 10.560 1.1728395        10 Female non-mgus  dead    early
     ## 2  92        0.9  1.553 1.2737921         1 Female non-mgus  dead   middle
@@ -290,6 +483,10 @@ Bivariate Plots
     ## 4  92        1.0  4.640 1.0900901         9 Female non-mgus  dead    early
     ## 5  93        1.1  3.010 0.7810651         6 Female non-mgus  dead    early
     ## 6  90        1.0  3.870 1.0806452         9 Female non-mgus  dead    early
+
+``` r
+str(data)
+```
 
     ## 'data.frame':    7874 obs. of  9 variables:
     ##  $ age       : int  97 92 94 92 93 90 90 90 93 91 ...
@@ -301,6 +498,10 @@ Bivariate Plots
     ##  $ mgus      : Factor w/ 2 levels "non-mgus","mgus": 1 1 1 1 1 1 1 1 1 1 ...
     ##  $ death     : Factor w/ 2 levels "alive","dead": 2 2 2 2 2 2 2 2 2 2 ...
     ##  $ recruits  : Factor w/ 3 levels "early","middle",..: 1 2 1 1 1 1 1 2 1 1 ...
+
+``` r
+summary(data)
+```
 
     ##       age           creatinine          flc           flc.ratio       
     ##  Min.   : 50.00   Min.   : 0.400   Min.   : 0.090   Min.   : 0.01389  
@@ -322,46 +523,112 @@ Bivariate Plots
 The dataset was modified according to [Univariate Analysis](#Univariate-Analysis), keeping only the selected features.
 It's possible to check [Data Transformations](#Data-Transformations) results on this part.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_2-1.png)
+``` r
+# Bivariate plots
+ggpairs(data, lower = list(combo = wrap("facethist", binwidth = 1)))
+```
+
+![](./images/bivariate_plots-1.png)
 
 The ggpairs function helped to show an overview of the relationship between variables and to calculate the correlation between numerical values.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_3-1.png)
+``` r
+# Relation between MGUS and FLC ratio (log)
+ggplot(data, aes(mgus, log(flc.ratio))) +
+  geom_boxplot()
+```
+
+![](./images/mgus_flc_ratio_log-1.png)
 
 Focusing on the first objective, to test FLC as a marker for MGUS.
 This graph shows that the average FLC ratio in people with the disease is higher than in those who don't have.
 But it seems that smaller FLC ratios can also be a indicator.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_4-1.png)
+``` r
+# Relation between MGUS and FLC ratio (log) with references
+ggplot(data, aes(mgus, log(flc.ratio))) +
+  geom_point() +
+  geom_hline(yintercept = c(log(.26), log(1.65)),
+             size       =.1)
+```
+
+![](./images/mgus_flc_ratio_log_2-1.png)
 
 Geom graph was changed to point and FLC ratio references from Mayo Clinic were marked (0.26-1.65).
 Most part of mgus one is outside the reference normal range.
 However, there is a point inside.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_5-1.png)
+``` r
+# Relation between MGUS and FLC ratio (log) with references
+ggplot(data, aes(mgus, log(flc.ratio), color = mgus)) +
+  geom_point(alpha = .2,
+             size  = .5) +
+  geom_hline(yintercept = c(log(.26), log(1.65)),
+             size       = .1) +
+  scale_color_manual(values = c("#ffcc66", "#cc00ff"))
+```
+
+![](./images/mgus_flc_ratio_log_3-1.png)
 
 The above graph shows that FLC can rather be an MGUS marker in most cases.
 For values greater or less than the reference.
 It is noteworthy that there are values on the limits and a point inside the normal range.
 Which may represent an exception to the test or a bad value.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_6-1.png)![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_6-2.png)
+``` r
+# Relation between epoch and FLC ratio (log)
+ggplot(data, aes(recruits, log(flc.ratio))) +
+  geom_boxplot()
+```
+
+![](./images/recruits_flc_ratio_log-1.png)
+
+``` r
+# Relation between epoch and FLC level (log)
+ggplot(data, aes(recruits, log(flc))) +
+  geom_boxplot()
+```
+
+![](./images/recruits_flc_ratio_log-2.png)
 
 Moving to point two, the differences between early, mid, and late recruits.
 It's apparent that the FLC ratio and levels means are close among the classifications.
 However, the range of values and the number of outliers decreased over time.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_7-1.png)
+``` r
+# Relation between Groups and FLC level (log)
+ggplot(data, aes(flc.group, log(flc))) +
+  geom_boxplot()
+```
+
+![](./images/groups_flc_level_log-1.png)
 
 On objective 3, to study the association between FLC and higher death rates.
 As the name suggests, each group of flc.group represents a range of FLC level.
 The groups are organized from lower levels to higher levels.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_8-1.png)
+``` r
+# Distribution by Groups and Deaths
+ggplot(data, aes(flc.group, fill = death)) +
+  geom_bar()+
+  scale_fill_manual(values = c("#00ff00", "#ff0000"))
+```
+
+![](./images/groups_deaths_distribution-1.png)
 
 Since FLC groups has similiar count and looking to the plot.
 Seems that higher FLC levels are associated with higher death rates.
 As informed on dataset details.
+
+``` r
+# Aggregated dataset of FLC levels and death rates
+flc.death <- data %>%
+  group_by(flc.group) %>%
+  summarise(
+    flc.mean   = mean(flc),
+    death.rate = sum(death == 'dead') / n())
+flc.death
+```
 
     ## # A tibble: 10 x 3
     ##    flc.group flc.mean death.rate
@@ -377,15 +644,43 @@ As informed on dataset details.
     ##  9 9             4.24      0.397
     ## 10 10            6.89      0.634
 
+``` r
+cor(flc.death$flc.mean, flc.death$death.rate)
+```
+
     ## [1] 0.9877749
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_9-1.png)![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_9-2.png)
+``` r
+# Relation between FLC mean and Death rate.
+ggplot(flc.death, aes(flc.mean, death.rate)) +
+  geom_line()
+```
+
+![](./images/flc_mean_death_rate-1.png)
+
+``` r
+# Relation between FLC mean and Death rate with linear smooth.
+ggplot(flc.death, aes(flc.mean, death.rate)) +
+  geom_line() +
+  geom_smooth(method = 'lm')
+```
+
+![](./images/flc_mean_death_rate-2.png)
 
 A new aggregate data set were created to confirm the hypothesis.
 FLC means and death rate were calculated group by flc.group.
 And there is a strong correlation between FLC level and death rates.
 
+``` r
+# Difference FLC level and creatinine correlation with or without log.
+cor(log(data$flc), log(data$creatinine), use = "complete.obs")
+```
+
     ## [1] 0.3821507
+
+``` r
+cor(data$flc, data$creatinine, use = "complete.obs")
+```
 
     ## [1] 0.550158
 
@@ -393,25 +688,60 @@ Additionally, ggpairs showed a good correlation between FLC level and creatinine
 It suggests that higher levels of creatinine may raise FLC level.
 In the next plots, log scale will not be used because it has influence on the correlation.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_11-1.png)![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_11-2.png)
+``` r
+# Relation between FLC levels and creatinine without missing values
+ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
+  geom_point()
+```
+
+![](./images/flc_level_creatinine-1.png)
+
+``` r
+# Avoiding overplotation
+ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
+  geom_point(alpha = .1)
+```
+
+![](./images/flc_level_creatinine-2.png)
 
 Missing creatinine rows were removed.
 The first plot seemed to be overplotted.
 An alpha parameter was add to solve this problem.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_12-1.png)
+``` r
+# Zoom in and linear regression line
+ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
+  geom_point(alpha = .1) +
+  geom_smooth(method = 'lm') +
+  coord_cartesian(xlim = c(0, 3),
+                  ylim = c(0, 10))
+```
+
+![](./images/flc_level_creatinine_regression-1.png)
 
 For a closer look, the graph was expanded where most of the points were.
 A linear smooth line was added to represent the correlation.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_13-1.png)
+``` r
+# Relation between sex and creatinine (log)
+ggplot(subset(data, !is.na(creatinine)), aes(sex, log(creatinine))) +
+  geom_boxplot()
+```
+
+![](./images/sex_creatinine_log-1.png)
 
 Analysing the relation between creatinine and sex.
 The plot shows that, on avarage, males has more creatinine than females.
 [Davita](https://www.davita.com/kidney-disease/overview/symptoms-and-diagnosis/what-is-creatinine?/e/4726 "creatinine") explain this difference.
 As creatinine is related to a person muscle, females usually have lower creatinine levels than males.
 
-![](Flchain_Exploration_files/figure-markdown_github/Bivariate_Plots_14-1.png)
+``` r
+# Relation between sex and FLC level (log)
+ggplot(data, aes(sex, log(flc))) +
+  geom_boxplot()
+```
+
+![](./images/sex_flc_level_log-1.png)
 
 As creatine has a good correlation with FLC levels.
 A more difference between male and females means and quartiles was expected.
@@ -450,18 +780,45 @@ By calculating the mean serum level of the group.
 Multivariate Plots
 ------------------
 
-![](Flchain_Exploration_files/figure-markdown_github/Multivariate_Plots_1-1.png)
+``` r
+# Recruits, FLC ratios and MGUS relation
+ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
+  geom_jitter(alpha = .2) +
+  geom_hline(yintercept = c(log(.26), log(1.65)),
+             size       = .1) +
+  scale_color_manual(values = c("#ffcc66", "#cc00ff"))
+```
+
+![](./images/recruits_flc_ratio_mgus-1.png)
 
 As expected, the number of people with MGUS descreased with time.
 Because the FLC ratio of the samples becomed more stable the older the recruitments were.
 
-![](Flchain_Exploration_files/figure-markdown_github/Multivariate_Plots_2-1.png)
+``` r
+# Creatinine, FLC and sex relation
+ggplot(subset(data, !is.na(creatinine)),
+       aes(creatinine, flc, color = sex)) +
+  geom_point(alpha = .1) +
+  geom_smooth(method = 'lm') +
+  coord_cartesian(xlim = c(0, 3),
+                  ylim = c(0, 10)) +
+  scale_color_manual(values = c("#ff66cc", "#00ccff"))
+```
+
+![](./images/creatinine_flc_sex-1.png)
 
 This plot shows that, although creatine influences FLC levels.
 There is no certain of the relationship between sex and FLC.
 Blue points are more on right than than the pink ones are, because creatine is on horizontal range. But both are mixed on vertical range, since male and female have similar boxplots, excluding outliers.
 
-![](Flchain_Exploration_files/figure-markdown_github/Multivariate_Plots_3-1.png)
+``` r
+# FLC groups, FLC levels and deaths relation
+ggplot(data, aes(flc.group, log(flc), color = death)) +
+  geom_jitter(alpha = .1) +
+  scale_color_manual(values = c("#00ff00", "#ff0000"))
+```
+
+![](./images/groups_flc_level_death-1.png)
 
 This plot displays a consolidated view.
 It is possible to see the FLC levels by group.
@@ -471,6 +828,12 @@ And that high levels of FLC result in higher numbers of deaths.
 
 Linear Model
 ------------
+
+``` r
+# Modeling with linear regression
+model <- lm(death.rate ~ flc.mean, flc.death)
+summary(model)
+```
 
     ## 
     ## Call:
@@ -492,11 +855,26 @@ Linear Model
     ## F-statistic: 321.2 on 1 and 8 DF,  p-value: 9.63e-08
 
 A linear model was created to predict the death rate of a group based on the mean FLC.
-A great R² was obtained.
+A great R^2 was obtained.
+
+``` r
+# Testing model
+set.seed(7874)
+data.sample <- data[sample(1:nrow(data), 1000), ]
+mean(data.sample$flc)
+```
 
     ## [1] 3.104338
 
+``` r
+sum(data.sample$death == 'dead') / length(data.sample$death)
+```
+
     ## [1] 0.276
+
+``` r
+predict(model, data.frame(flc.mean = mean(data.sample$flc)))
+```
 
     ##         1 
     ## 0.2730489
@@ -530,7 +908,7 @@ Therefore, the hypothesis of the influence of sex on FLC levels was discarded.
 ### Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
 Yes, a linear model to predict death rates on groups based on FLC levels was created.
-With great R² of 97.57%.
+With great R^2 of 97.57%.
 And nice standard error of approximately 2.5%.
 
 ------------------------------------------------------------------------
@@ -540,7 +918,18 @@ Final Plots and Summary
 
 ### Plot One
 
-![](Flchain_Exploration_files/figure-markdown_github/Plot_One-1.png)
+``` r
+# Plot one
+ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
+  geom_jitter(alpha = .2) +
+  geom_hline(yintercept = c(log(.26), log(1.65)),
+             size       = .1) +
+  scale_color_manual(values = c("#ffcc66", "#cc00ff"))+
+  labs(title = "FLC as a MGUS marker",
+       y     = "Log of FLC Ratio")
+```
+
+![](./images/plot_one-1.png)
 
 ### Description One
 
@@ -554,7 +943,18 @@ That MGUS may be indicated by abnormal FLC ratio.
 
 ### Plot Two
 
-![](Flchain_Exploration_files/figure-markdown_github/Plot_Two-1.png)
+``` r
+# Plot two
+ggplot(data, aes(recruits, (..count.. / sum(..count..)),
+                            color = I('black'),
+                            fill  = I('#ffff00'))) +
+  geom_bar() +
+  scale_y_continuous(breaks = seq(0, 1, .05)) +
+  labs(title = "Difference between early, mid, and late recruits",
+       y     = 'Density') 
+```
+
+![](./images/plot_two-1.png)
 
 ### Description Two
 
@@ -568,7 +968,17 @@ Since early recruits represents almost 80% of the total.
 
 ### Plot Three
 
-![](Flchain_Exploration_files/figure-markdown_github/Plot_Three-1.png)
+``` r
+# Plot three
+ggplot(data, aes(flc.group, log(flc), color = death)) +
+  geom_jitter(alpha = .1) +
+  scale_color_manual(values = c("#00ff00", "#ff0000")) +
+  labs(title = 'Association between FLC and higher death rates',
+       y     = 'Log of FLC level',
+       x     = 'Groups')
+```
+
+![](./images/plot_three-1.png)
 
 ### Description Three
 
@@ -607,7 +1017,7 @@ Like the influence of sex on FLC levels, because of the relationship with these 
 A predictive model, using linear regression, was created.
 The purpose of the model was to predict for a new group of observations.
 What would be the death rate of the sample?
-As a result, the model presented good values for R² and Standard error.
+As a result, the model presented good values for R^2 and Standard error.
 
 The dataset details do not provide the units of the variables.
 That was one of the difficulties of the analysis.
