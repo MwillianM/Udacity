@@ -1,0 +1,12 @@
+References
+https://github.com/MwillianM/Udacity/blob/master/OpenStreetMapDataWrangling/
+https://vincentarelbundock.github.io/Rdatasets/datasets.html
+https://google.github.io/styleguide/Rguide.xml
+https://www.rdocumentation.org/
+https://stat.ethz.ch/R-manual/R-devel/library/survival/html/flchain.html
+https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
+https://www.mayoclinic.org/diseases-conditions/mgus/symptoms-causes/syc-20352362
+https://www.mayomedicallaboratories.com/test-catalog/Clinical+and+Interpretive/84190
+https://www.davita.com/kidney-disease/overview/symptoms-and-diagnosis/what-is-creatinine?/e/4726
+https://www.w3schools.com/colors/colors_picker.asp
+https://www.udacity.com/
