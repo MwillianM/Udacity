@@ -6,8 +6,8 @@ R
 
 ------------------------------------------------------------------------
 
-**Author :** Matheus Willian Machado
-**Date :** May 16, 2018
+**Author :** Matheus Willian Machado  
+**Date :** May 16, 2018  
 
 ------------------------------------------------------------------------
 
@@ -49,9 +49,9 @@ It's possible to get more information about the dataset with `?flchain` or [here
 
 Based on the details above, three points were selected for analysis:
 
-[ ] FLC as a MGUS marker.
-[ ] Differences between early, mid, and late recruits.
-[ ] Association between FLC and higher death rates.
+- [ ] FLC as a MGUS marker.  
+- [ ] Differences between early, mid, and late recruits.  
+- [ ] Association between FLC and higher death rates.  
 
 ------------------------------------------------------------------------
 
