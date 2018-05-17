@@ -322,7 +322,7 @@ ggplot(data, aes(age)) +
   geom_histogram(binwidth = .5)
 ```
 
-![](./age_distribution-1.png)
+![](./images/age_distribution-1.png)
 
 As age is a integer variable.
 To see all frequencys, a small binwidth was chosen for the distribution.
@@ -335,7 +335,7 @@ ggplot(data, aes(sample.year)) +
   geom_histogram(binwidth = 1)
 ```
 
-![](./samples_year_distribution-1.png)
+![](./images/samples_year_distribution-1.png)
 
 Because of the narrower range compared to age, a higher binwidth was prefered to this.
 Most part is concentrate on the first three years.
@@ -349,7 +349,7 @@ ggplot(data, aes(recruits, (..count.. / sum(..count..)))) +
   scale_y_continuous(breaks = seq(0, 1, .1))
 ```
 
-![](./recruits_density-1.png)
+![](./images/recruits_density-1.png)
 
 As expected, almost 80% of the sample was recruited within the first three years.
 In contrast, only about 5% in the last three years.
@@ -368,7 +368,7 @@ ggplot(data) +
   xlab('kappa, lambda and creatinine')
 ```
 
-![](./sera_frequency-1.png)
+![](./images/sera_frequency-1.png)
 
 Serum variables were analyzed togheter.
 Red was used for kappa, blue for lambda and creatinine green.
@@ -390,7 +390,7 @@ ggplot(data) +
   xlab('Log of creatinine, kappa and lambda')
 ```
 
-![](./sera_log_frequency-1.png)
+![](./images/sera_log_frequency-1.png)
 
 ``` r
 # Summaries of creatinine, kappa and lambda (log)
@@ -422,7 +422,7 @@ ggplot(data) +
   xlab('Log of FLC level and ratio')
 ```
 
-![](./flc_level_ratio_log_frequency-1.png)
+![](./images/flc_level_ratio_log_frequency-1.png)
 
 ``` r
 # Summaries of FLC level and ratio
@@ -448,7 +448,7 @@ ggplot(data) +
   scale_y_continuous(breaks = seq(0, 800, 50))
 ```
 
-![](./flc_group_distribution-1.png)
+![](./images/flc_group_distribution-1.png)
 
 The last plot shows that the FLC groups have similar amounts.
 
@@ -564,7 +564,7 @@ ggpairs(data,
         lower      = list(combo = wrap("facethist", binwidth = 1)))
 ```
 
-![](./bivariate_plots-1.png)
+![](./images/bivariate_plots-1.png)
 
 The ggpairs function helped to show an overview of the relationship between variables and to calculate the correlation between numerical values.
 
@@ -574,7 +574,7 @@ ggplot(data, aes(mgus, log(flc.ratio))) +
   geom_boxplot()
 ```
 
-![](./mgus_flc_ratio_log-1.png)
+![](./images/mgus_flc_ratio_log-1.png)
 
 ``` r
 # Summaries of FLC ratio by MGUS
@@ -601,7 +601,7 @@ ggplot(data, aes(mgus, log(flc.ratio))) +
              size       =.1)
 ```
 
-![](./mgus_flc_ratio_log_2-1.png)
+![](./images/mgus_flc_ratio_log_2-1.png)
 
 Geom graph was changed to point and FLC ratio references from Mayo Clinic were marked (0.26-1.65).
 Most part of mgus one is outside the reference normal range.
@@ -617,7 +617,7 @@ ggplot(data, aes(mgus, log(flc.ratio), color = mgus)) +
   scale_color_manual(values = c("#ffcc66", "#cc00ff"))
 ```
 
-![](./mgus_flc_ratio_log_3-1.png)
+![](./images/mgus_flc_ratio_log_3-1.png)
 
 ``` r
 # Frequency of FLC ratio ranges by MGUS
@@ -645,7 +645,7 @@ ggplot(data, aes(recruits, log(flc.ratio))) +
   geom_boxplot()
 ```
 
-![](./recruits_flc_ratio_log-1.png)
+![](./images/recruits_flc_ratio_log-1.png)
 
 ``` r
 # Relation between epoch and FLC level (log)
@@ -653,7 +653,7 @@ ggplot(data, aes(recruits, log(flc))) +
   geom_boxplot()
 ```
 
-![](./recruits_flc_ratio_log-2.png)
+![](./images/recruits_flc_ratio_log-2.png)
 
 ``` r
 # Summaries of FLC ratio and level by recruits
@@ -697,7 +697,7 @@ ggplot(data, aes(flc.group, log(flc))) +
   geom_boxplot()
 ```
 
-![](./groups_flc_level_log-1.png)
+![](./images/groups_flc_level_log-1.png)
 
 ``` r
 data %>% 
@@ -731,7 +731,7 @@ ggplot(data, aes(flc.group, fill = death)) +
   scale_fill_manual(values = c("#00ff00", "#ff0000"))
 ```
 
-![](./groups_deaths_distribution-1.png)
+![](./images/groups_deaths_distribution-1.png)
 
 Since FLC groups has similiar count and looking to the plot.
 Seems that higher FLC levels are associated with higher death rates.
@@ -772,7 +772,7 @@ ggplot(flc.death, aes(flc.mean, death.rate)) +
   geom_line()
 ```
 
-![](./flc_mean_death_rate-1.png)
+![](./images/flc_mean_death_rate-1.png)
 
 ``` r
 # Relation between FLC mean and Death rate with linear smooth.
@@ -781,7 +781,7 @@ ggplot(flc.death, aes(flc.mean, death.rate)) +
   geom_smooth(method = 'lm')
 ```
 
-![](./flc_mean_death_rate-2.png)
+![](./images/flc_mean_death_rate-2.png)
 
 A new aggregate data set were created to confirm the hypothesis.
 FLC means and death rate were calculated group by flc.group.
@@ -810,7 +810,7 @@ ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
   geom_point()
 ```
 
-![](./flc_level_creatinine-1.png)
+![](./images/flc_level_creatinine-1.png)
 
 ``` r
 # Avoiding overplotation
@@ -818,7 +818,7 @@ ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
   geom_point(alpha = .1)
 ```
 
-![](./flc_level_creatinine-2.png)
+![](./images/flc_level_creatinine-2.png)
 
 Missing creatinine rows were removed.
 The first plot seemed to be overplotted.
@@ -833,7 +833,7 @@ ggplot(subset(data, !is.na(creatinine)), aes(creatinine, flc)) +
                   ylim = c(0, 10))
 ```
 
-![](./flc_level_creatinine_regression-1.png)
+![](./images/flc_level_creatinine_regression-1.png)
 
 For a closer look, the graph was expanded where most of the points were.
 A linear smooth line was added to represent the correlation.
@@ -844,7 +844,7 @@ ggplot(subset(data, !is.na(creatinine)), aes(sex, log(creatinine))) +
   geom_boxplot()
 ```
 
-![](./sex_creatinine_log-1.png)
+![](./images/sex_creatinine_log-1.png)
 
 ``` r
 # Creatinine (log) summaries by sex
@@ -870,7 +870,7 @@ ggplot(data, aes(sex, log(flc))) +
   geom_boxplot()
 ```
 
-![](./sex_flc_level_log-1.png)
+![](./images/sex_flc_level_log-1.png)
 
 ``` r
 # FLC level (log) summaries by sex
@@ -931,7 +931,7 @@ ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
   scale_color_manual(values = c("#ffcc66", "#cc00ff"))
 ```
 
-![](./recruits_flc_ratio_mgus-1.png)
+![](./images/recruits_flc_ratio_mgus-1.png)
 
 ``` r
 # Table with MGUS, Recruits and FLC ratio range
@@ -960,7 +960,7 @@ ggplot(subset(data, !is.na(creatinine)),
   scale_color_manual(values = c("#ff66cc", "#00ccff"))
 ```
 
-![](./creatinine_flc_sex-1.png)
+![](./images/creatinine_flc_sex-1.png)
 
 This plot shows that, although creatine influences FLC levels.
 There is no certain of the relationship between sex and FLC.
@@ -973,7 +973,7 @@ ggplot(data, aes(flc.group, log(flc), color = death)) +
   scale_color_manual(values = c("#00ff00", "#ff0000"))
 ```
 
-![](./groups_flc_level_death-1.png)
+![](./images/groups_flc_level_death-1.png)
 
 ``` r
 # Aggregate dataset with min, max and death rate by FLC group
@@ -1107,7 +1107,7 @@ ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
        y     = "Log of FLC Ratio")
 ```
 
-![](./plot_one-1.png)
+![](./images/plot_one-1.png)
 
 ``` r
 # Table with MGUS, Recruits and FLC ratio range
@@ -1147,7 +1147,7 @@ ggplot(data, aes(recruits, (..count.. / sum(..count..)),
        y     = 'Density') 
 ```
 
-![](./plot_two-1.png)
+![](./images/plot_two-1.png)
 
 ### Description Two
 
@@ -1171,7 +1171,7 @@ ggplot(data, aes(flc.group, log(flc), color = death)) +
        x     = 'Groups')
 ```
 
-![](./plot_three-1.png)
+![](./images/plot_three-1.png)
 
 ``` r
 # Aggregate dataset with min, max and death rate by FLC group
