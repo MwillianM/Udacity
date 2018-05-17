@@ -3,10 +3,6 @@ title: "Flchain Exploratory Data Analysis"
 output: github_document
 ---
 
-```{r echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## R
 
 ---
@@ -53,16 +49,16 @@ It's possible to get more information about the dataset with `?flchain` or [here
 
 Based on the details above, three points were selected for analysis:
 
-[ ] FLC as a MGUS marker.  
-[ ] Differences between early, mid, and late recruits.  
-[ ] Association between FLC and higher death rates.  
+- [ ] FLC as a MGUS marker.  
+- [ ] Differences between early, mid, and late recruits.  
+- [ ] Association between FLC and higher death rates.  
 
 
 ---
 
 
 
-```{r message=FALSE, warning=FALSE, load_libraries}
+```{r, message=FALSE, warning=FALSE, load_libraries}
 # Load libraries
 library(survival)
 library(ggplot2)
@@ -222,14 +218,9 @@ In contrast, only about 5% in the last three years.
 ```{r, sera_frequency}
 # Frequency of kappa, lambda and creatinine sera
 ggplot(data) +
-  geom_freqpoly(aes(kappa,
-                    color = 'kappa'),
-                binwidth = .1) +
-  geom_freqpoly(aes(lambda,
-                    color = 'lambda'),
-                binwidth = .1) +
-  geom_freqpoly(aes(creatinine,
-                    color = 'creatinine'),
+  geom_freqpoly(aes(kappa, color = 'kappa'), binwidth = .1) +
+  geom_freqpoly(aes(lambda, color = 'lambda'), binwidth = .1) +
+  geom_freqpoly(aes(creatinine, color = 'creatinine'),
                 data     = subset(data, !is.na(creatinine)),
                 binwidth = .1) +
   scale_colour_manual(name   = 'Sera',
@@ -245,15 +236,11 @@ For a better understanding x-scale was transformed.
 ```{r, sera_log_frequency}
 # Frequency of kappa, lambda and creatinine sera (log)
 ggplot(data) +
-  geom_freqpoly(aes(log(kappa),
-                    color = 'kappa'),
-                binwidth = .1) +
-  geom_freqpoly(aes(log(lambda),
-                    color = 'lambda'),
-                binwidth = .1) +
+  geom_freqpoly(aes(log(kappa), color = 'kappa'), binwidth = .1) +
+  geom_freqpoly(aes(log(lambda), color = 'lambda'), binwidth = .1) +
   geom_freqpoly(aes(log(creatinine),
                     color = 'creatinine'),
-                data = subset(data,!is.na(creatinine)),
+                    data  = subset(data,!is.na(creatinine)),
                 binwidth = .1) +
   scale_x_continuous(breaks = seq(-4, 4, .5)) +
   scale_colour_manual(name   = 'Sera',
@@ -274,12 +261,8 @@ Creatinine seems more concentrated and the others more diluted.
 ```{r, flc_level_ratio_log_frequency}
 # Frequency of FLC level and ratio (log)
 ggplot(data) +
-  geom_freqpoly(aes(log(flc),
-                    color = 'level'),
-                binwidth = .1) +
-  geom_freqpoly(aes(log(flc.ratio),
-                    color = 'ratio'),
-                binwidth = .1) +
+  geom_freqpoly(aes(log(flc), color = 'level'), binwidth = .1) +
+  geom_freqpoly(aes(log(flc.ratio), color = 'ratio'), binwidth = .1) +
   scale_x_continuous(breaks = seq(-4, 4, .5)) +
   scale_colour_manual(name   = 'FLC',
                       breaks = c('level', 'ratio'),
@@ -358,7 +341,9 @@ Yes, the following variables were created to help achieve the objectives:
 
 ```{r, subseting_data}
 # Subseting data
-data = data[, c("age", "creatinine", "flc", "flc.ratio", "flc.group", "sex", "mgus", "death", "recruits")]
+data = data[, c("age", "creatinine", "flc",
+                "flc.ratio", "flc.group", "sex",
+                "mgus", "death", "recruits")]
 head(data)
 str(data)
 summary(data)
@@ -367,9 +352,11 @@ summary(data)
 The dataset was modified according to [Univariate Analysis](#Univariate-Analysis), keeping only the selected features.  
 It's possible to check [Data Transformations](#Data-Transformations) results on this part.  
 
-```{r message=FALSE, warning=FALSE, fig.height=15, fig.width=15, bivariate_plots}
+```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=15, bivariate_plots}
 # Bivariate plots
-ggpairs(data, lower = list(combo = wrap("facethist", binwidth = 1)), axisLabels = "internal")
+ggpairs(data,
+        axisLabels = "internal",
+        lower      = list(combo = wrap("facethist", binwidth = 1)))
 ```
 
 The ggpairs function helped to show an overview of the relationship between variables and to calculate the correlation between numerical values.
@@ -412,6 +399,7 @@ ggplot(data, aes(mgus, log(flc.ratio), color = mgus)) +
 ```
 
 ```{r}
+# Frequency of FLC ratio ranges by MGUS
 by(cut(data$flc.ratio, breaks = c(0, .259, 1.65, 50)), data$mgus, table)
 ```
 
@@ -458,7 +446,7 @@ The groups are organized from lower levels to higher levels.
 ```{r, groups_deaths_distribution}
 # Distribution by Groups and Deaths
 ggplot(data, aes(flc.group, fill = death)) +
-  geom_bar()+
+  geom_bar() +
   scale_fill_manual(values = c("#00ff00", "#ff0000"))
 ```
 
@@ -529,6 +517,7 @@ ggplot(subset(data, !is.na(creatinine)), aes(sex, log(creatinine))) +
 ```
 
 ```{r}
+# Creatinine (log) summaries by sex
 by(log(data$creatinine),data$sex, summary)
 ```
 
@@ -544,6 +533,7 @@ ggplot(data, aes(sex, log(flc))) +
 ```
 
 ```{r}
+# FLC level (log) summaries by sex
 by(log(data$flc),data$sex, summary)
 ```
 
@@ -592,6 +582,7 @@ ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
 ```
 
 ```{r}
+# Table with MGUS, Recruits and FLC ratio range
 data$flc.ratio.range = cut(data$flc.ratio, breaks = c(0, .259, 1.65, 50))
 with(data, ftable(mgus+recruits ~ flc.ratio.range))
 ```
@@ -623,6 +614,7 @@ ggplot(data, aes(flc.group, log(flc), color = death)) +
 ```
 
 ```{r}
+# Aggregate dataset with min, max and death rate by FLC group
 data %>% 
   group_by(flc.group) %>% 
   summarise(flc.min = min(flc),
@@ -645,7 +637,7 @@ summary(model)
 ```
 
 A linear model was created to predict the death rate of a group based on the mean FLC.  
-A great R² was obtained.  
+A great R^2 was obtained.  
 
 ```{r, testing_model}
 # Testing model
@@ -685,7 +677,7 @@ Therefore, the hypothesis of the influence of sex on FLC levels was discarded.
 ### Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
 Yes, a linear model to predict death rates on groups based on FLC levels was created.  
-With great R² of 97.57%.  
+With great R^2 of 97.57%.  
 And nice standard error of approximately 2.5%.  
 
 ---
@@ -706,6 +698,7 @@ ggplot(data, aes(recruits, log(flc.ratio), color = mgus)) +
 ```
 
 ```{r}
+# Table with MGUS, Recruits and FLC ratio range
 with(data, ftable(mgus+recruits ~ flc.ratio.range))
 ```
 
@@ -757,10 +750,11 @@ ggplot(data, aes(flc.group, log(flc), color = death)) +
        x     = 'Groups')
 ```
 ```{r}
+# Aggregate dataset with min, max and death rate by FLC group
 data %>% 
   group_by(flc.group) %>% 
-  summarise(flc.min = min(flc),
-            flc.max = max(flc),
+  summarise(flc.min    = min(flc),
+            flc.max    = max(flc),
             death.rate = sum(death == 'dead') / n())
 ```
 
@@ -801,7 +795,7 @@ Like the influence of sex on FLC levels, because of the relationship with these 
 A predictive model, using linear regression, was created.  
 The purpose of the model was to predict for a new group of observations.  
 What would be the death rate of the sample?  
-As a result, the model presented good values for R² and Standard error.  
+As a result, the model presented good values for R^2 and Standard error.  
 
 The dataset details do not provide the units of the variables.  
 That was one of the difficulties of the analysis.  
@@ -818,14 +812,14 @@ And they could be used in futures projects.
 
 ## References
 
-1. https://github.com/MwillianM/Udacity/blob/master/OpenStreetMapDataWrangling/
-1. https://vincentarelbundock.github.io/Rdatasets/datasets.html
-1. https://google.github.io/styleguide/Rguide.xml
-1. https://www.rdocumentation.org/
-1. https://stat.ethz.ch/R-manual/R-devel/library/survival/html/flchain.html
-1. https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
-1. https://www.mayoclinic.org/diseases-conditions/mgus/symptoms-causes/syc-20352362
-1. https://www.mayomedicallaboratories.com/test-catalog/Clinical+and+Interpretive/84190
-1. https://www.davita.com/kidney-disease/overview/symptoms-and-diagnosis/what-is-creatinine?/e/4726
-1. https://www.w3schools.com/colors/colors_picker.asp
-1. https://www.udacity.com/
+1. <https://github.com/MwillianM/Udacity/blob/master/OpenStreetMapDataWrangling/>
+1. <https://vincentarelbundock.github.io/Rdatasets/datasets.html>
+1. <https://google.github.io/styleguide/Rguide.xml>
+1. <https://www.rdocumentation.org/>
+1. <https://stat.ethz.ch/R-manual/R-devel/library/survival/html/flchain.html>
+1. <https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html>
+1. <https://www.mayoclinic.org/diseases-conditions/mgus/symptoms-causes/syc-20352362>
+1. <https://www.mayomedicallaboratories.com/test-catalog/Clinical+and+Interpretive/84190>
+1. <https://www.davita.com/kidney-disease/overview/symptoms-and-diagnosis/what-is-creatinine?/e/4726>
+1. <https://www.w3schools.com/colors/colors_picker.asp>
+1. <https://www.udacity.com/>
