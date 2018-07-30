@@ -15,6 +15,8 @@ Project Overview
 ----------------
 
 > Use R and apply exploratory data analysis techniques to explore relationships in one to multiple variables and to explore a set of selected data, their distributions, outliers, and anomalies.
+> 
+> (Udacity)
 
 ------------------------------------------------------------------------
 
